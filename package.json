@@ -2,7 +2,7 @@
   "name": "complex-plane",
   "version": "1.0.0",
   "description": "Визуализация функций комплексного переменного — Manim-style",
-  "author": "Vladislav Nadzhip",
+  "author": "Vladislav Nadzhip <cinguvercin@gmail.com>",
   "main": "electron/main.cjs",
   "type": "module",
   "scripts": {
