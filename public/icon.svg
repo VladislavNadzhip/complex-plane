@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="256" y2="256">
+      <stop offset="0%" stop-color="#14141c"/>
+      <stop offset="100%" stop-color="#0e0e12"/>
+    </linearGradient>
+    <linearGradient id="plane" x1="40" y1="200" x2="216" y2="56">
+      <stop offset="0%" stop-color="#58C4DD"/>
+      <stop offset="50%" stop-color="#83C167"/>
+      <stop offset="100%" stop-color="#FFD166"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="4" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <rect width="256" height="256" rx="52" fill="url(#bg)"/>
+  <circle cx="128" cy="128" r="88" stroke="#58C4DD" stroke-width="2" opacity="0.25"/>
+  <circle cx="128" cy="128" r="56" stroke="#FFD166" stroke-width="1.5" stroke-dasharray="6 8" opacity="0.5"/>
+  <path d="M48 128 H208 M128 48 V208" stroke="#ffffff" stroke-width="1" opacity="0.12"/>
+  <path d="M72 168 Q128 72 184 96 T200 140" stroke="url(#plane)" stroke-width="6" stroke-linecap="round" fill="none" filter="url(#glow)"/>
+  <circle cx="128" cy="110" r="10" fill="#FC6255" opacity="0.9"/>
+  <circle cx="168" cy="130" r="7" fill="#58C4DD"/>
+  <text x="128" y="220" text-anchor="middle" font-family="serif" font-size="28" fill="#8b8998" opacity="0.7">ℂ</text>
+</svg>

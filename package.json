@@ -1,0 +1,66 @@
+{
+  "name": "complex-plane",
+  "version": "1.0.0",
+  "description": "Визуализация функций комплексного переменного — Manim-style",
+  "author": "Vladislav Nadzhip",
+  "main": "electron/main.cjs",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "electron": "electron .",
+    "start": "powershell -NoProfile -ExecutionPolicy Bypass -File ./start.ps1",
+    "start:prod": "npm run build && electron .",
+    "launch": "electron .",
+    "pack": "npm run build && electron-builder --dir",
+    "dist": "npm run build && electron-builder --publish never"
+  },
+  "build": {
+    "appId": "com.complexplane.app",
+    "productName": "Complex Plane",
+    "directories": { "output": "release" },
+    "files": ["dist/**/*", "electron/**/*", "src/assets/**/*"],
+    "publish": {
+      "provider": "github",
+      "owner": "VladislavNadzhip",
+      "repo": "complex-plane"
+    },
+    "win": {
+      "target": ["nsis"],
+      "icon": "src/assets/icon.png"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Complex Plane"
+    },
+    "mac": {
+      "target": ["dmg"],
+      "icon": "src/assets/icon.png",
+      "category": "public.app-category.education"
+    },
+    "linux": {
+      "target": ["AppImage", "deb"],
+      "icon": "src/assets/icon.png",
+      "category": "Education"
+    }
+  },
+  "dependencies": {
+    "gsap": "^3.12.5",
+    "katex": "^0.16.11",
+    "three": "^0.170.0"
+  },
+  "devDependencies": {
+    "@types/three": "^0.170.0",
+    "concurrently": "^9.1.0",
+    "electron": "^33.2.0",
+    "electron-builder": "^25.1.8",
+    "typescript": "^5.6.3",
+    "vite": "^6.0.3",
+    "wait-on": "^8.0.1"
+  }
+}

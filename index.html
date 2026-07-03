@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Complex Plane</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,500;0,600;1,500&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div id="app">
+      <header class="topbar">
+        <div class="brand">
+          <img src="/icon.svg" alt="" class="brand-icon" width="28" height="28" />
+          <div>
+            <h1>Complex Plane</h1>
+            <p class="subtitle">функции комплексного переменного</p>
+          </div>
+        </div>
+        <div class="formula-bar" id="formula-bar"></div>
+        <div class="topbar-actions">
+          <button class="btn ghost" id="btn-reset-view" title="Сбросить масштаб">⊙</button>
+          <button class="btn ghost" id="btn-export" title="Экспорт PNG">PNG</button>
+          <button class="btn primary" id="btn-animate">▶ Анимировать</button>
+        </div>
+      </header>
+
+      <div class="workspace">
+        <aside class="panel panel-left">
+          <div class="mode-tabs" id="mode-tabs">
+            <button data-mode="transform" class="active">Преобразования</button>
+            <button data-mode="function">Функция f(z)</button>
+          </div>
+
+          <div id="panel-transform">
+            <section class="panel-section">
+              <h2>Добавить шаг</h2>
+              <select id="transform-select" class="select"></select>
+              <div id="param-fields" class="param-fields"></div>
+              <button class="btn accent" id="btn-add">+ Добавить в цепочку</button>
+            </section>
+
+            <section class="panel-section">
+              <h2>Кривая γ в плоскости z</h2>
+              <select id="transform-curve-select" class="select"></select>
+              <label class="param-label">
+                <span id="transform-curve-param-label">r</span>
+                <input type="number" id="transform-curve-param" value="1" step="0.1" />
+              </label>
+              <p class="param-hint">Режим «Кривая»: золотая — γ, голубая — w(γ). У полюсов/∞ ломаная рвётся (без ложных хорд).</p>
+            </section>
+
+            <section class="panel-section">
+              <h2>Быстрые пресеты</h2>
+              <div class="preset-grid" id="preset-grid"></div>
+            </section>
+
+            <section class="panel-section">
+              <div class="section-header">
+                <h2>Цепочка</h2>
+                <button class="btn ghost sm" id="btn-clear">Очистить</button>
+              </div>
+              <ul id="chain-list" class="chain-list"></ul>
+            </section>
+
+            <section class="panel-section" id="step-editor-section">
+              <h2 id="step-editor-title">Параметры шага</h2>
+              <p class="param-hint">Выберите шаг в цепочке или нажмите ⚙</p>
+              <div id="step-editor" class="param-fields"></div>
+            </section>
+          </div>
+
+          <div id="panel-function" class="hidden">
+            <section class="panel-section">
+              <h2>f(z) =</h2>
+              <input type="text" id="function-expr" class="expr-input" value="sin(z)" spellcheck="false" />
+              <p class="param-hint">Примеры: z*z, sin(z), exp(z), 1/z, z*z*z-1</p>
+              <label class="param-label">
+                Отображение
+                <select id="function-display" class="select">
+                  <option value="domain">Domain coloring</option>
+                  <option value="magnitude">|f(z)|</option>
+                  <option value="real">Re f(z)</option>
+                  <option value="imag">Im f(z)</option>
+                  <option value="argument">arg f(z)</option>
+                </select>
+              </label>
+              <button class="btn accent" id="btn-apply-fn">Применить</button>
+            </section>
+
+            <section class="panel-section">
+              <h2>Кривая в z-плоскости</h2>
+              <select id="curve-select" class="select"></select>
+              <label class="param-label">
+                <span id="curve-param-label">r</span>
+                <input type="number" id="curve-param" value="1" step="0.1" />
+              </label>
+              <p class="param-hint">Режим «Кривые»: золотая = в z, красная = f(z)</p>
+            </section>
+          </div>
+        </aside>
+
+        <main class="viewport">
+          <canvas id="viz-canvas"></canvas>
+          <div id="loading-overlay" class="loading-overlay hidden">
+            <div class="loading-spinner"></div>
+            <span>Вычисление поля…</span>
+          </div>
+          <div class="viewport-overlay">
+            <div class="view-tabs" id="view-tabs">
+              <button data-view="domain" class="active">Domain</button>
+              <button data-view="contour">Контуры</button>
+              <button data-view="curve">Кривая</button>
+              <button data-view="grid">Сетка</button>
+              <button data-view="phase">Фаза 3D</button>
+            </div>
+            <div class="view-tabs hidden" id="view-tabs-fn">
+              <button data-view="func-domain" class="active">Поле f(z)</button>
+              <button data-view="func-isolines">Линии Re/Im</button>
+              <button data-view="func-curves">Кривые</button>
+            </div>
+            <div class="viewport-hint" id="viewport-hint">Колёсико — зум · Перетаскивание — пан · Двойной клик — сброс</div>
+            <div class="coords-readout" id="coords-readout">z = —</div>
+          </div>
+        </main>
+
+        <aside class="panel panel-right">
+          <section class="panel-section">
+            <h2>Область z</h2>
+            <div class="range-grid">
+              <label>Re min <input type="number" id="x-min" value="-2.5" step="0.5" /></label>
+              <label>Re max <input type="number" id="x-max" value="2.5" step="0.5" /></label>
+              <label>Im min <input type="number" id="y-min" value="-2.5" step="0.5" /></label>
+              <label>Im max <input type="number" id="y-max" value="2.5" step="0.5" /></label>
+            </div>
+          </section>
+
+          <section class="panel-section">
+            <h2>Качество</h2>
+            <label class="slider-label">
+              Разрешение <span id="res-label">512</span>
+              <input type="range" id="resolution" min="128" max="1024" step="64" value="512" />
+            </label>
+            <label class="slider-label">
+              Обрезка |w| <span id="clip-label">8</span>
+              <input type="range" id="clip" min="2" max="30" step="1" value="8" />
+            </label>
+          </section>
+
+          <section class="panel-section" id="playback-section">
+            <h2>Просмотр цепочки</h2>
+            <div class="playback-mode" id="playback-mode">
+              <button type="button" data-playback="full" class="active">Весь результат</button>
+              <button type="button" data-playback="steps">Пошагово</button>
+            </div>
+            <label class="slider-label hidden" id="step-slider-wrap">
+              Шаг <span id="step-label">z</span>
+              <input type="range" id="playback-step" min="0" max="0" step="1" value="0" />
+            </label>
+            <p class="param-hint" id="step-hint">Показан полный результат всех преобразований</p>
+          </section>
+
+          <section class="panel-section">
+            <h2>Анимация</h2>
+            <label class="slider-label">
+              Длительность <span id="dur-label">5s</span>
+              <input type="range" id="duration" min="0.5" max="120" step="0.5" value="5" />
+            </label>
+            <label class="slider-label">
+              Easing
+              <select id="easing" class="select">
+                <option value="manim">Manim — smooth</option>
+                <option value="manim_rush_into">Manim — rush in</option>
+                <option value="manim_rush_from">Manim — rush out</option>
+                <option value="power2.inOut">Power</option>
+                <option value="power1.inOut">Медленный power</option>
+                <option value="elastic.out">Elastic</option>
+                <option value="steps(24)">Step</option>
+              </select>
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" id="loop-anim" /> Зациклить
+            </label>
+          </section>
+
+          <section class="panel-section legend">
+            <h2>Легенда</h2>
+            <div class="legend-item"><span class="swatch hue"></span> Цвет = arg</div>
+            <div class="legend-item"><span class="swatch bright"></span> Яркость = |·|</div>
+            <div class="legend-item"><span class="swatch zero"></span> Нули</div>
+            <div class="legend-item"><span class="swatch pole"></span> Полюса</div>
+          </section>
+        </aside>
+      </div>
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
